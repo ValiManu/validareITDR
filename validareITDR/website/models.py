@@ -1,11 +1,14 @@
+from django.conf import settings
 from django.db import models
 
 
 class Store(models.Model):
     store_name = models.CharField(max_length=30, verbose_name='Denumire')
+    full_name = models.CharField(max_length=30)
     store_address = models.CharField(max_length=40, verbose_name='Adresa')
     store_active = models.BooleanField(verbose_name='Activ', default=True)
     group_store = models.ForeignKey('GroupStore', on_delete=models.SET_NULL, null=True)
+    allocate_user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
     class Meta:
         ordering = ['store_name']
