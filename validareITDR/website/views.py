@@ -9,8 +9,13 @@ from django.shortcuts import HttpResponse
 
 @login_required
 def index(request):
-    store = Store.objects.filter(allocate_user__exact='2')
+    store = get_object_or_404(Store.objects.filter(allocate_user__exact=request.user.id))
+    product_list = Product.objects.filter(store__exact=store.id)
     print('*' * 15)
-    print(store)
+    print(product_list)
     print('*' * 15)
-    return render(request, 'index.html', context={'store': store})
+    context = {
+        'store': store,
+        'product_list': product_list,
+    }
+    return render(request, 'index.html', context)

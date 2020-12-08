@@ -28,6 +28,8 @@ class Product(models.Model):
     product_name = models.CharField(max_length=20, verbose_name='Denumire')
     url_img = models.CharField(max_length=200, verbose_name='URL Img')
     product_active = models.BooleanField(verbose_name='Activ', default=True)
+    stock = models.IntegerField(verbose_name="Stoc")
+    store = models.ForeignKey('Store', on_delete=models.SET_NULL, null=True)
 
     class Meta:
         ordering = ['product_name']

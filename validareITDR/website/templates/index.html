@@ -158,14 +158,19 @@
 							<th>Cantitate</th>
 						</tr>
 						</thead>
+						{% if product_list %}
+						{% for product in product_list %}
 						<tbody>
-						<td class="with-checkbox">123</td>
-						<td class="with-checkbox">123</td>
+						<td class="with-checkbox">{{ product }}</td>
+						<td class="with-checkbox">{{ product.stock }}</td>
 						</tbody>
+						{% endfor %}
+						{% else %}
 						<tbody>
-						<td class="with-checkbox">123</td>
-						<td class="with-checkbox">123</td>
+						<td class="with-checkbox">-</td>
+						<td class="with-checkbox">-</td>
 						</tbody>
+						{% endif %}
 					</table>
 				</div>
 			</div>
