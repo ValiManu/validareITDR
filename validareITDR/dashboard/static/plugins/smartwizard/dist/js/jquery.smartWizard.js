@@ -259,6 +259,25 @@
             $('.sw-btn-next', this.main).on("click", function (e) {
                 e.preventDefault();
                 mi._showNext();
+                var step = document.getElementById('step-2').style.display;
+                var input_value = document.querySelector("[data-parsley-group='step-1']").value;
+                if(input_value != '' && step == 'block') {
+                    $.ajax({
+                        url: 'http://127.0.0.1:7000/transactions/ajax_response',
+                        data: {
+                        'ticket': input_value
+                        },
+                        dataType: 'json',
+                        success: function(data) {
+                        if (data.is_taken) {
+                            alert('Bonul este utilizat');
+                            mi._showPrevious();
+                        } else {
+                            console.log(input_value);
+                            }
+                        }
+                    });
+                }
             });
 
             // Previous button event

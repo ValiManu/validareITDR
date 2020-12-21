@@ -1,7 +1,10 @@
 from django.contrib import admin
-from .models import Store, GroupStore, Product, Campaign
+from .models import Shop, Network, Product, PromotionalCampaign, Address, Prize
 
-admin.site.register(Store)
-admin.site.register(GroupStore)
+admin.site.register(Shop)
+admin.site.register(Network)
 admin.site.register(Product)
-admin.site.register(Campaign)
+admin.site.register(PromotionalCampaign)
+admin.site.register(Address)
+admin.site.register(Prize)
+

@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+<div id="content" class="content">
+	<h1 class="page-header">Validare Bon <small>Self Running 4</small></h1>
+	<!-- end page-header -->
+	<!-- begin wizard-form -->
+	<form action="/" method="POST" name="form-wizard" class="form-control-with-bg" data-parsley-validate="true">
+		{% csrf_token %}
+		<!-- begin wizard -->
+		<div id="wizard">
+			<!-- begin wizard-step -->
+			<ul>
+				<li>
+					<a href="#step-1">
+						<span class="number">1</span>
+						<span class="info">
+							Bon Fiscal
+							<small>Introdu numar de bon fiscal</small>
+						</span>
+					</a>
+				</li>
+				<li>
+					<a href="#step-2">
+						<span class="number">2</span>
+						<span class="info">
+							Produse
+							<small>Alege produsele achizitionate</small>
+						</span>
+					</a>
+				</li>
+				<li>
+					<a href="#step-3">
+						<span class="number">3</span>
+						<span class="info">
+							Premii
+							<small>Revendica premiul</small>
+						</span>
+					</a>
+				</li>
+			</ul>
+			<!-- end wizard-step -->
+			<!-- begin wizard-content -->
+			<div class="sw-container tab-content" style="min-height: 528px;">
+				<!-- begin step-1 -->
+				<div id="step-1"class="tab-pane step-content">
+					<!-- begin fieldset -->
+					<fieldset>
+						<!-- begin row -->
+						<div class="row">
+							<!-- begin col-8 -->
+							<div class="col-xl-8 offset-xl-2">
+								<div class="form-group row m-b-10">
+									<label class="col-lg-3 text-lg-right col-form-label">Numar Bon</label>
+									<div class="col-lg-9">
+										<input class="form-control m-b-10" autocomplete="off" type="text" data-parsley-type="number" data-parsley-required="true" data-parsley-group="step-1">
+									</div>
+								</div>
+							</div>
+							<!-- end col-8 -->
+						</div>
+						<!-- end row -->
+					</fieldset>
+					<!-- end fieldset -->
+				</div>
+				<!-- end step-1 -->
+				<!-- begin step-2 -->
+				<div id="step-2" class="tab-pane step-content" name="step-2">
+					<div class="row">
+					<!-- begin fieldset -->
+						{% for prod in product_list %}
+						<div class="col-lg-3" style="padding: 10px">
+							<div class="card text-center">
+								<div class="card-header" onclick="setQuantity(this, 1)" style="cursor: pointer;">
+									<img src="{% static prod.url_img %}" alt="{{ prod.name }}">
+								</div>
+								<div onclick="setQuantity(this, 1)" style="font-weight: 600; color: white; cursor: pointer">{{ prod.name }}</div>
+								<div class="card-footer">
+									<input class="form-control m-b-10" autocomplete="off" type="number" data-parsley-type="number" data-parsley-group="step-2" value="0">
+								</div>
+							</div>
+						</div>
+						{% endfor %}
+					</div>
+				</div>
+				<!-- end step-2 -->
+				<!-- begin step-3 -->
+				<div id="step-3" class="tab-pane step-content">
+					<!-- begin fieldset -->
+					<fieldset>
+						<!-- begin row -->
+						<div class="row">
+							<!-- begin col-8 -->
+							<div class="col-xl-8 offset-xl-2">
+								<!-- begin form-group -->
+								<div class="form-group row m-b-10">
+									<label class="col-lg-3 text-lg-right col-form-label">Username <span class="text-danger">*</span></label>
+									<div class="col-lg-9 col-xl-6">
+										<input type="text" name="username" placeholder="johnsmithy" class="form-control" data-parsley-group="step-3" data-parsley-required="true" data-parsley-type="alphanum" />
+									</div>
+								</div>
+								<!-- end form-group -->
+								<!-- begin form-group -->
+								<div class="form-group row m-b-10">
+									<label class="col-lg-3 text-lg-right col-form-label">Pasword <span class="text-danger">*</span></label>
+									<div class="col-lg-9 col-xl-6">
+										<input type="password" name="password" placeholder="Your password" class="form-control" data-parsley-group="step-3" data-parsley-required="true" />
+									</div>
+								</div>
+								<!-- end form-group -->
+								<!-- begin form-group -->
+								<div class="form-group row m-b-10">
+									<label class="col-lg-3 text-lg-right col-form-label">Confirm Pasword <span class="text-danger">*</span></label>
+									<div class="col-lg-9 col-xl-6">
+										<input type="password" name="password2" placeholder="Confirmed password" class="form-control" data-parsley-group="step-3" data-parsley-required="true" />
+									</div>
+								</div>
+								<!-- end form-group -->
+							</div>
+							<!-- end col-8 -->
+						</div>
+						<!-- end row -->
+					</fieldset>
+					<!-- end fieldset -->
+				</div>
+				<!-- end step-3 -->
+				<!-- begin step-4 -->
+				<div id="step-4">
+					<div class="jumbotron m-b-0 text-center">
+						<h2 class="display-4">Register Successfully</h2>
+						<p class="lead mb-4">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris consequat commodo porttitor. <br />Vivamus eleifend, arcu in tincidunt semper, lorem odio molestie lacus, sed malesuada est lacus ac ligula. Aliquam bibendum felis id purus ullamcorper, quis luctus leo sollicitudin. </p>
+						<p><a href="javascript:;" class="btn btn-primary btn-lg">Proceed to User Profile</a></p>
+					</div>
+				</div>
+				<!-- end step-4 -->
+			</div>
+			<!-- end wizard-content -->
+		</div>
+		<!-- end wizard -->
+	</form>
+	<!-- end wizard-form -->
+</div>
+{% endblock %}

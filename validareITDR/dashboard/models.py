@@ -2,51 +2,71 @@ from django.conf import settings
 from django.db import models
 
 
-class Store(models.Model):
-    store_name = models.CharField(max_length=30, verbose_name='Denumire')
-    full_name = models.CharField(max_length=30)
-    store_address = models.CharField(max_length=40, verbose_name='Adresa')
-    store_active = models.BooleanField(verbose_name='Activ', default=True)
-    group_store = models.ForeignKey('GroupStore', on_delete=models.SET_NULL, null=True)
-    allocate_user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+class Address(models.Model):
+    city = models.CharField(max_length=30, verbose_name='Oras')
+    street = models.CharField(max_length=30, verbose_name='Strada')
+    street_no = models.IntegerField(verbose_name='Nr.')
+
+    def __str__(self):
+        return self.city
+
+
+class Shop(models.Model):
+    name = models.CharField(max_length=30, verbose_name='Nume Magazin')
+    address = models.ForeignKey('Address', on_delete=models.SET_NULL, null=True)
+    active_shop = models.BooleanField(verbose_name='Activ', default=True)
+    network = models.ForeignKey('Network', on_delete=models.SET_NULL, null=True)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
     class Meta:
-        ordering = ['store_name']
+        ordering = ['name']
 
     def __str__(self):
-        return self.store_name
+        return self.name
 
 
-class GroupStore(models.Model):
-    group_store = models.CharField(max_length=20, verbose_name='Grup Magazin')
+class Network(models.Model):
+    name = models.CharField(max_length=20, verbose_name='Retea')
+    cif = models.IntegerField(verbose_name='CUI')
 
     def __str__(self):
-        return self.group_store
+        return self.name
 
 
 class Product(models.Model):
-    product_name = models.CharField(max_length=20, verbose_name='Denumire')
+    name = models.CharField(max_length=50, verbose_name='Nume Produs')
     url_img = models.CharField(max_length=200, verbose_name='URL Img')
-    product_active = models.BooleanField(verbose_name='Activ', default=True)
-    stock = models.IntegerField(verbose_name="Stoc")
-    store = models.ForeignKey('Store', on_delete=models.SET_NULL, null=True)
+    active_product = models.BooleanField(verbose_name='Activ', default=True)
 
     class Meta:
-        ordering = ['product_name']
+        ordering = ['name']
 
     def __str__(self):
-        return self.product_name
+        return self.name
 
 
-class Campaign(models.Model):
-    campaign_name = models.CharField(max_length=50, verbose_name='Denumire')
-    campaign_start_date = models.DateField(verbose_name='Data Start')
-    campaign_end_date = models.DateField(verbose_name='Data Sfarsit')
-    campaign_active = models.BooleanField(default=False, verbose_name='Activ')
-    product = models.ManyToManyField(Product)
+class PromotionalCampaign(models.Model):
+    name = models.CharField(max_length=50, verbose_name='Nume Campanie')
+    start_date = models.DateField(verbose_name='Data Start')
+    end_date = models.DateField(verbose_name='Data Sfarsit')
+    active_campaign = models.BooleanField(default=False, verbose_name='Activ')
+    product = models.ForeignKey('Product', on_delete=models.CASCADE)
+    shops_network = models.ForeignKey('Network', on_delete=models.CASCADE)
 
     class Meta:
-        ordering = ['campaign_name']
+        ordering = ['name']
 
     def __str__(self):
-        return self.campaign_name
+        return self.name
+
+
+class Prize(models.Model):
+    name = models.CharField(max_length=20, verbose_name='Nume Premiu')
+    url_img = models.CharField(max_length=200, verbose_name='URL Img')
+    active_product = models.BooleanField(verbose_name='Activ', default=True)
+    quantity = models.IntegerField(default=0, verbose_name='Stoc')
+    shop = models.ForeignKey('Shop', on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.name
+

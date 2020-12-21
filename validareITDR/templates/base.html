@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>Validare ITDR | Dashboard</title>
+	<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport" />
+	<meta content="" name="description" />
+	<meta content="" name="author" />
+	{% load static %}
+	<!-- ================== BEGIN BASE CSS STYLE ================== -->
+	<link href="{% static 'css/transparent/app.min.css' %}" rel="stylesheet" />
+	<!-- ================== END BASE CSS STYLE ================== -->
+
+    <!-- ================== BEGIN PAGE LEVEL STYLE ================== -->
+	<link href="{% static 'plugins/smartwizard/dist/css/smart_wizard.css' %}" rel="stylesheet" />
+	<!-- ================== END PAGE LEVEL STYLE ================== -->
+
+</head>
+<body>
+	<!-- begin page-cover -->
+	<div class="page-cover"></div>
+	<!-- end page-cover -->
+
+	<!-- begin #page-loader -->
+	<div id="page-loader" class="fade show">
+		<span class="spinner"></span>
+	</div>
+	<!-- end #page-loader -->
+
+	<!-- begin #page-container -->
+	<div id="page-container" class="page-container fade page-sidebar-fixed page-header-fixed">
+		<!-- begin #header -->
+		<div id="header" class="header navbar-default">
+			<!-- begin navbar-header -->
+			<div class="navbar-header">
+				<a href="{% url 'index'%}" class="navbar-brand"><span class="navbar-logo"></span> <b>Validare</b> ITDR</a>
+			</div>
+			<!-- end navbar-header -->
+			<!-- begin header-nav -->
+			<ul class="navbar-nav navbar-right">
+				<li class="dropdown navbar-user">
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown">
+						<div class="image image-icon bg-black text-grey-darker">
+							<i class="fa fa-user"></i>
+						</div>
+						<span class="d-none d-md-inline">{{user.get_username.capitalize}}</span> <b class="caret"></b>
+					</a>
+					<div class="dropdown-menu dropdown-menu-right">
+						<a href="{% url 'logout'%}?next={{request.path}}" class="dropdown-item">Log Out</a>
+					</div>
+				</li>
+			</ul>
+			<!-- end header navigation right -->
+		</div>
+		<!-- end #header -->
+
+		<!-- begin #sidebar -->
+		<div id="sidebar" class="sidebar">
+			<!-- begin sidebar scrollbar -->
+			<div data-scrollbar="true" data-height="100%">
+				<!-- begin sidebar user -->
+				<ul class="nav">
+					<li class="nav-profile">
+						<a href="javascript:;" data-toggle="nav-profile">
+							<div class="cover with-shadow"></div>
+							<div class="image image-icon bg-black text-grey-darker">
+								<i class="fa fa-user"></i>
+							</div>
+							<div class="info">{{shop.user}}
+								<small>{{ shop.name }}</small>
+							</div>
+						</a>
+					</li>
+				</ul>
+				<!-- end sidebar user -->
+				<!-- begin sidebar nav -->
+				<ul class="nav">
+					<li class="active">
+						<a href="index.html">
+							<i class="fa fa-th-large"></i>
+							<span>Home</span>
+						</a>
+					</li>
+					<li class="has-sub">
+						<a href="{% url 'transactions' %}">
+							<i class="far fa-check-circle"></i>
+							<span>Validare Bon</span>
+						</a>
+						<a href="javascript:;">
+							<i class="fa fa-question-circle"></i>
+							<span>Manual de Utilizare</span>
+						</a>
+						<a href="javascript:;">
+							<i class="fa fa-info-circle"></i>
+							<span>Regulament Campanie</span>
+						</a>
+						<a href="javascript:;">
+							<i class="fa fa-info-circle"></i>
+							<span>Prezentare Campanie</span>
+						</a>
+					</li>
+					<!-- begin sidebar minify button -->
+					<li><a href="javascript:;" class="sidebar-minify-btn" data-click="sidebar-minify"><i class="fa fa-angle-double-left"></i></a></li>
+					<!-- end sidebar minify button -->
+				</ul>
+				<!-- end sidebar nav -->
+			</div>
+			<!-- end sidebar scrollbar -->
+		</div>
+
+        {% block content %}{% endblock %}
+
+		<a href="javascript:;" class="btn btn-icon btn-circle btn-success btn-scroll-to-top fade" data-click="scroll-top"><i class="fa fa-angle-up"></i></a>
+		<!-- end scroll to top btn -->
+	</div>
+	<!-- end page container -->
+
+	<!-- ================== BEGIN BASE JS ================== -->
+	<script src="{% static 'js/app.min.js' %}"></script>
+	<script src="{% static 'js/theme/transparent.min.js' %}"></script>
+	<!-- ================== END BASE JS ================== -->
+
+    <!-- ================== BEGIN PAGE LEVEL JS ================== -->
+	<script src="{% static 'plugins/parsleyjs/dist/parsley.js' %}"></script>
+	<script src="{% static 'plugins/smartwizard/dist/js/jquery.smartWizard.js' %}"></script>
+    <script src="{% static 'js/demo/form-wizards-validation.demo.js' %}"></script>
+	<script src="{% static 'custom_js/custom.js' %}"></script>
+	<!-- ================== END PAGE LEVEL JS ================== -->
+
+</body>
+</html>
+
