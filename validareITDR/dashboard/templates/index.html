@@ -23,12 +23,16 @@
 					<th>Premiu Acordat</th>
 				</tr>
 				</thead>
-				<tbody>
-				<td class="with-checkbox">123</td>
-				<td class="with-checkbox">123</td>
-				<td class="with-checkbox">123</td>
-				<td class="with-checkbox">123</td>
+				{% for tran in transactions %}
+                <tbody>
+				<td class="with-checkbox">Campanie</td>
+				<td class="with-checkbox">{{ shop }}</td>
+				<td class="with-checkbox">{{ tran.ticket_no }}</td>
+				<td class="with-checkbox">{{ tran.ticket_date|date:'d-m-Y H:i' }}</td>
+                <td class="with-checkbox">{{ tran.total_sale }}</td>
+                <td class="with-checkbox">{{ tran.prize }}</td>
 				</tbody>
+                {% endfor %}
 			</table>
 		</div>
 	</div>
@@ -48,11 +52,11 @@
 					<th>Cantitate</th>
 				</tr>
 				</thead>
-				{% if product_list %}
-				{% for product in product_list %}
+				{% if prize_list %}
+				{% for prize in prize_list %}
 				<tbody>
-				<td class="with-checkbox">{{ product }}</td>
-				<td class="with-checkbox">{{ product.quantity }}</td>
+				<td class="with-checkbox">{{ prize }}</td>
+				<td class="with-checkbox">{{ prize.quantity }}</td>
 				</tbody>
 				{% endfor %}
 				{% else %}

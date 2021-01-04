@@ -50,7 +50,7 @@ class PromotionalCampaign(models.Model):
     start_date = models.DateField(verbose_name='Data Start')
     end_date = models.DateField(verbose_name='Data Sfarsit')
     active_campaign = models.BooleanField(default=False, verbose_name='Activ')
-    product = models.ForeignKey('Product', on_delete=models.CASCADE)
+    product = models.ManyToManyField('Product')
     shops_network = models.ForeignKey('Network', on_delete=models.CASCADE)
 
     class Meta:
@@ -66,6 +66,8 @@ class Prize(models.Model):
     active_product = models.BooleanField(verbose_name='Activ', default=True)
     quantity = models.IntegerField(default=0, verbose_name='Stoc')
     shop = models.ForeignKey('Shop', on_delete=models.CASCADE)
+    min = models.IntegerField(default=0)
+    max = models.IntegerField(default=0)
 
     def __str__(self):
         return self.name
