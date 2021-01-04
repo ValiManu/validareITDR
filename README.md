@@ -22,3 +22,7 @@
 * testing the first ajax request
 
 ## 3. ticket validation branches => ticket
+* field validation
+* form wizard manually restored
+* the mechanics of awarding prizes according to the products sold
+* display transactions in the dashboard
