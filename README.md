@@ -21,3 +21,4 @@
 * cleaning the static folder
 * testing the first ajax request
 
+## 3. ticket validation branches => ticket

@@ -53,7 +53,7 @@
 								<div class="form-group row m-b-10">
 									<label class="col-lg-3 text-lg-right col-form-label">Numar Bon</label>
 									<div class="col-lg-9">
-										<input class="form-control m-b-10" autocomplete="off" type="text" data-parsley-type="number" data-parsley-required="true" data-parsley-group="step-1">
+										<input class="form-control m-b-10" id="inputStep1" autocomplete="off" type="text" data-parsley-type="number" data-parsley-required="true" data-parsley-group="step-1">
 									</div>
 								</div>
 							</div>
@@ -76,7 +76,7 @@
 								</div>
 								<div onclick="setQuantity(this, 1)" style="font-weight: 600; color: white; cursor: pointer">{{ prod.name }}</div>
 								<div class="card-footer">
-									<input class="form-control m-b-10" autocomplete="off" type="number" data-parsley-type="number" data-parsley-group="step-2" value="0">
+									<input class="form-control m-b-10" autocomplete="off" id="{{ prod.id }}" type="number" data-parsley-type="number" data-parsley-group="step-2" value="0">
 								</div>
 							</div>
 						</div>
@@ -140,4 +140,7 @@
 	</form>
 	<!-- end wizard-form -->
 </div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="{% static 'custom_js/custom_js.js' %}"></script>
 {% endblock %}
+

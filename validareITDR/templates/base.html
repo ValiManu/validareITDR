@@ -124,8 +124,8 @@
 	<script src="{% static 'plugins/parsleyjs/dist/parsley.js' %}"></script>
 	<script src="{% static 'plugins/smartwizard/dist/js/jquery.smartWizard.js' %}"></script>
     <script src="{% static 'js/demo/form-wizards-validation.demo.js' %}"></script>
-	<script src="{% static 'custom_js/custom.js' %}"></script>
 	<!-- ================== END PAGE LEVEL JS ================== -->
+	{% block scripts %} {% endblock %}
 
 </body>
 </html>
