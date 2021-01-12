@@ -37,6 +37,7 @@ class Product(models.Model):
     name = models.CharField(max_length=50, verbose_name='Nume Produs')
     url_img = models.CharField(max_length=200, verbose_name='URL Img')
     active_product = models.BooleanField(verbose_name='Activ', default=True)
+    promotional_campaign = models.ForeignKey('PromotionalCampaign', on_delete=models.CASCADE)
 
     class Meta:
         ordering = ['name']
@@ -47,10 +48,9 @@ class Product(models.Model):
 
 class PromotionalCampaign(models.Model):
     name = models.CharField(max_length=50, verbose_name='Nume Campanie')
-    start_date = models.DateField(verbose_name='Data Start')
-    end_date = models.DateField(verbose_name='Data Sfarsit')
-    active_campaign = models.BooleanField(default=False, verbose_name='Activ')
-    product = models.ManyToManyField('Product')
+    start_date = models.DateTimeField(verbose_name='Data Start')
+    end_date = models.DateTimeField(verbose_name='Data Sfarsit')
+    selected_campaign = models.BooleanField(default=False, verbose_name='Activ')
     shops_network = models.ForeignKey('Network', on_delete=models.CASCADE)
 
     class Meta:
@@ -68,6 +68,7 @@ class Prize(models.Model):
     shop = models.ForeignKey('Shop', on_delete=models.CASCADE)
     min = models.IntegerField(default=0)
     max = models.IntegerField(default=0)
+    promotional_campaign = models.ForeignKey('PromotionalCampaign', on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name

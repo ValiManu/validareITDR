@@ -7,6 +7,7 @@ class Sales (models.Model):
     shop = models.ForeignKey('dashboard.Shop', on_delete=models.SET_NULL, null=True)
     prize = models.ForeignKey('dashboard.Prize', on_delete=models.SET_NULL, null=True)
     total_sale = models.IntegerField(default=0)
+    promotional_campaign = models.ForeignKey('dashboard.PromotionalCampaign', on_delete=models.SET_NULL, null=True)
 
 
 class ProductsSold (models.Model):

@@ -7,7 +7,7 @@ from .models import Sales, ProductsSold
 
 @admin.register(Sales)
 class SalesAdmin(admin.ModelAdmin):
-    list_display = ('id', 'ticket_no', 'ticket_date', 'shop', 'prize')
+    list_display = ('id', 'ticket_no', 'ticket_date', 'shop', 'prize', 'promotional_campaign')
 
 
 @admin.register(ProductsSold)

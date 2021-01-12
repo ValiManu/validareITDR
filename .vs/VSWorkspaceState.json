@@ -3,11 +3,7 @@
     "",
     "\\validareITDR",
     "\\validareITDR\\dashboard",
-    "\\validareITDR\\dashboard\\static",
-    "\\validareITDR\\dashboard\\static\\custom_js",
-    "\\validareITDR\\transactions",
-    "\\validareITDR\\transactions\\templates"
+    "\\validareITDR\\dashboard\\static\\custom_js"
   ],
-  "SelectedNode": "\\validareITDR\\dashboard\\static\\custom_js\\custom_js.js",
   "PreviewInSolutionExplorer": false
 }

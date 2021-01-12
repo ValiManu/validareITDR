@@ -1,8 +1,10 @@
 from datetime import datetime
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404
+from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 from dashboard.models import Product, Prize, Shop
+from dashboard.views import get_active_campaign, get_selected_campaign
 from .models import Sales, ProductsSold
 from django.http import JsonResponse
 import json
@@ -10,16 +12,15 @@ import json
 
 @login_required
 def transactions(request):
-    product_list = Product.objects.all()
     context = {
-        'product_list': product_list
+        'product_list': get_campaign_products(),
+        'active_campaign': get_active_campaign()
     }
-
     return render(request, 'transactions.html', context)
 
 
 @login_required
-def ticket_validation(request):
+def is_ticket_in_use(request):
     ticket = request.GET.get('ticket')
     result = 0
     if not ticket.isnumeric():
@@ -37,25 +38,24 @@ def ticket_validation(request):
 
 
 @login_required
-def product_validation(request):
-    if request.is_ajax and request.method == 'GET':
-        products = request.GET.getlist('products[]')
-        check_products = 0
-        data = {}
-        for prod in products:
-            check_products = check_products + int(prod)
-        if check_products == 0:
-            return JsonResponse({'response': False})
-        else:
-            prize_list = Prize.objects.all()
-            for prize in prize_list:
-                if prize.min < check_products <= prize.max:
-                    data = {
-                        'name': prize.name,
-                        'url_img': prize.url_img,
-                        'id': prize.id,
-                        'response': True
-                    }
+def is_product_in_use(request):
+    products = request.GET.getlist('products[]')
+    check_products = 0
+    data = {}
+    for prod in products:
+        check_products = check_products + int(prod)
+    if check_products == 0:
+        return JsonResponse({'response': False})
+    else:
+        prize_list = Prize.objects.all()
+        for prize in prize_list:
+            if prize.min < check_products <= prize.max:
+                data = {
+                    'name': prize.name,
+                    'url_img': prize.url_img,
+                    'id': prize.id,
+                    'response': True
+                }
     return JsonResponse(data)
 
 
@@ -72,7 +72,7 @@ def save_data(request):
         total_sold = total_sold + int(prod['value'])
     sales = Sales()
     sales.ticket_no = ticket_no
-    sales.ticket_date = datetime.now()
+    sales.ticket_date = timezone.now()
     sales.prize_id = id_prize
     sales.shop_id = shop
     sales.total_sale = total_sold
@@ -88,3 +88,8 @@ def save_data(request):
             prize.quantity = prize.quantity - 1
             prize.save()
     return JsonResponse({'response': True})
+
+
+def get_campaign_products():
+    product_list = Product.objects.filter(promotional_campaign__exact=get_selected_campaign().id)
+    return product_list
