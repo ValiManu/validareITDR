@@ -1,8 +1,9 @@
 {% extends "base.html" %}
 
 {% block content %}
+
 <div id="content" class="content">
-	<h1 class="page-header"> Dashboard </h1>
+	<h1 class="page-header"> Dashboard <small><i> Campanie: {{ selected_campaign }} {% if not active_campaign %} <strong>: Expirata </strong> {% endif %}</i></small></h1>
 	<div class="panel panel-inverse">
 		<div class="panel-heading">
 			<h4 class="panel-title">Vanzari</h4>
@@ -12,57 +13,106 @@
 			</div>
 		</div>
 		<div class="panel-body">
-			<table class="table table-bordered">
-				<thead>
-				<tr>
-					<th>Campanie</th>
-					<th>Magazin</th>
-					<th>Numar Bon</th>
-					<th>Data</th>
-					<th>Produse Vandute</th>
-					<th>Premiu Acordat</th>
-				</tr>
-				</thead>
-				<tbody>
-				<td class="with-checkbox">123</td>
-				<td class="with-checkbox">123</td>
-				<td class="with-checkbox">123</td>
-				<td class="with-checkbox">123</td>
-				</tbody>
-			</table>
+            <div id="gridContainer" class="table table-bordered"></div>
 		</div>
 	</div>
-	<div class="panel panel-inverse">
-		<div class="panel-heading">
-			<h4 class="panel-title">Stoc Magazin</h4>
-			<div class="panel-heading-btn">
-				<a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-default" data-click="panel-expand"><i class="fa fa-expand"></i></a>
-				<a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-warning" data-click="panel-collapse"><i class="fa fa-minus"></i></a>
+    <div class="panel panel-inverse">
+			<div class="panel-heading">
+				<h4 class="panel-title">Stoc Magazin</h4>
+				<div class="panel-heading-btn">
+					<a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-default" data-click="panel-expand"><i class="fa fa-expand"></i></a>
+					<a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-warning" data-click="panel-collapse"><i class="fa fa-minus"></i></a>
+				</div>
+			</div>
+			<div class="panel-body">
+				<table class="table">
+					<thead class="bg-black-transparent-4">
+						<tr>
+							<th>Produs</th>
+							<th>Cantitate</th>
+						</tr>
+					</thead>
+					{% if prize_list %}
+					{% for prize in prize_list %}
+					<tbody>
+					<td class="with-checkbox">{{ prize }}</td>
+					<td class="with-checkbox">{{ prize.quantity }}</td>
+					</tbody>
+					{% endfor %}
+					{% else %}
+					<tbody>
+					<td class="with-checkbox">-</td>
+					<td class="with-checkbox">-</td>
+					</tbody>
+					{% endif %}
+				</table>
 			</div>
 		</div>
-		<div class="panel-body">
-			<table class="table">
-				<thead class="bg-black-transparent-4">
-				<tr>
-					<th>Produs</th>
-					<th>Cantitate</th>
-				</tr>
-				</thead>
-				{% if product_list %}
-				{% for product in product_list %}
-				<tbody>
-				<td class="with-checkbox">{{ product }}</td>
-				<td class="with-checkbox">{{ product.quantity }}</td>
-				</tbody>
-				{% endfor %}
-				{% else %}
-				<tbody>
-				<td class="with-checkbox">-</td>
-				<td class="with-checkbox">-</td>
-				</tbody>
-				{% endif %}
-			</table>
-		</div>
-	</div>
 </div>
+<style>
+    .dx-datagrid-headers {
+        color: #B3B3B3;
+    }
+</style>
+<script>
+    (function () {
+        $("#gridContainer").dxDataGrid({
+            dataSource: "{% url 'dashboard' %}",
+            paging: {
+                pageSize: 5
+            },
+            pager: {
+                showPageSizeSelector: true,
+                allowedPageSizes: [5, 10, 20],
+            },
+            filterRow: {
+                visible: true,
+                applyFilter: "auto"
+			},
+            export: {
+                enabled: true,
+			},
+            onExporting: function (e) {
+                var workbook = new ExcelJS.Workbook();
+                var worksheet = workbook.addWorksheet('Vanzari');
+
+                DevExpress.excelExporter.exportDataGrid({
+                    component: e.component,
+                    worksheet: worksheet,
+                    autoFilterEnabled: true
+                }).then(function () {
+                    workbook.xlsx.writeBuffer().then(function (buffer) {
+                        saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'Vanzari.xlsx');
+                    });
+                });
+                e.cancel = true;
+            },
+			columns: [{
+				dataField: "campaign",
+				caption: "Campanie"
+			}, {
+				dataField: "shop",
+				caption: "Magazin"
+				}, {
+					dataField: "ticket_no",
+					caption: "Numar Bon"
+				}, {
+					dataField: "date",
+					caption: "Data"
+				}, {
+					dataField: "total_sale",
+					caption: "Produse Vandute"
+				}, {
+					dataField: "prize",
+					caption: "Premiu Acordat"
+					}],
+        onInitNewRow: function(e) {
+            e.shop = 245;
+        },
+        showBorders: true
+    });
+    })();
+</script>
 {% endblock %}
+
+<!-- ["id", ticket_no", ticket_date", "shop_id", "prize_id", "total_sale", "promotional_campaign_id"] -->

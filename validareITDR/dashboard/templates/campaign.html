@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div id="content" class="content">
+    <h1 class="page-header"> Campanii Disponibile</i></small></h1>
+	<div class="panel panel-inverse">
+		<div class="panel-body">
+			<table class="table table-bordered">
+				<thead>
+				<tr>
+					<th>Denumire</th>
+					<th>Data Inceput</th>
+					<th>Data Sfarsit</th>
+					<th>Stare</th>
+					<th>Selecteaza Campanie</th>
+				</tr>
+				</thead>
+				{% for campaign in campaigns %}
+                <tbody>
+				<td class="with-checkbox">{{ campaign }}</td>
+				<td class="with-checkbox">{{ campaign.start_date|date:'d-m-Y' }}</td>
+				<td class="with-checkbox">{{ campaign.end_date|date:'d-m-Y' }}</td>
+				<td class="with-checkbox">{% if campaign.end_date >= today_date %}Activa{% else %}Inactiva{% endif %}</td>
+                <td class="with-checkbox"><a href="#" id="{{ campaign.id }}" onclick="selectCampaign(this)" class="btn btn-primary btn-xs"><i class="fas fa-arrow-alt-circle-right fa-flip-vertical"></i></a></td>
+				</tbody>
+                {% endfor %}
+			</table>
+		</div>
+	</div>
+</div>
+<script>
+
+	var selectCampaign = function (e) {
+		data = {
+			'activeCampaign': e.getAttribute('id')
+		};
+		$.ajax({
+			type: 'POST',
+			url: 'http://127.0.0.1:7000/dashboard/set-campaign/',
+			data: data,
+            success: function (response) {
+                if (response.response) {
+                    console.log('Datele au fost salvate');
+                    window.location.href ="{% url 'index' %}"
+                }
+                else {
+                    console.log('Nu a fost selectat nicun produs');
+                    $('.alert').css('display', 'block')
+                }
+            },
+            error: function (response) {
+                console.log(response);
+            }
+        })
+    }
+
+    
+</script>
+{% endblock %}
