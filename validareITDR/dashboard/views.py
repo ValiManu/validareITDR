@@ -2,7 +2,6 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
-
 from dashboard.models import PromotionalCampaign, Shop, Prize
 from transactions.models import Sales
 from django.http import JsonResponse
@@ -20,6 +19,7 @@ def index(request):
     return render(request, 'index.html', context)
 
 
+@login_required
 def change_campaign(request):
     context = {
         'campaigns': get_all_campaign(),
@@ -75,6 +75,7 @@ def get_active_campaign():
     return False
 
 
+@login_required
 def dashboard_report(request):
     transactions = Sales.objects.filter(shop_id__exact=get_user_shop(request).id,
                                         promotional_campaign_id__exact=get_selected_campaign().id)
