@@ -489,7 +489,4 @@ MigrationBackup/
 # End of https://www.toptal.com/developers/gitignore/api/windows,pycharm,visualstudio
 
 #Static File
-dashboard/static/css
-dashboard/static/img
-dashboard/static/js
-dashboard/static/plugins
+
