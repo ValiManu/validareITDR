@@ -4,7 +4,7 @@ from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 from dashboard.models import PromotionalCampaign, Shop, Prize
 from transactions.models import Sales
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 
 
 @login_required
@@ -38,7 +38,6 @@ def set_campaigns(request):
     selected_campaign = PromotionalCampaign.objects.get(id__exact=request.POST.get('activeCampaign'))
     selected_campaign.selected_campaign = True
     selected_campaign.save()
-    print(a.selected_campaign)
     return JsonResponse({'response': True})
 
 
@@ -76,7 +75,7 @@ def get_active_campaign():
 
 
 @login_required
-def dashboard_report(request):
+def sales_report(request):
     transactions = Sales.objects.filter(shop_id__exact=get_user_shop(request).id,
                                         promotional_campaign_id__exact=get_selected_campaign().id)
     list_transactions = []
@@ -85,10 +84,22 @@ def dashboard_report(request):
             'campaign': PromotionalCampaign.objects.get(id__exact=transaction.promotional_campaign_id).name,
             'shop': Shop.objects.get(id__exact=transaction.shop_id).name,
             'ticket_no': transaction.ticket_no,
-            'date': transaction.ticket_date.strftime("%d-%m-%Y %H:%M:%S"),
+            'date': transaction.ticket_date,
             'total_sale': transaction.total_sale,
             'prize': Prize.objects.get(id__exact=transaction.prize_id).name
-
         }
         list_transactions.append(data)
     return JsonResponse(list_transactions, safe=False)
+
+
+@login_required
+def prize_list_report(request):
+    awards = list(get_prize_list(request))
+    prize_list = []
+    for prize in awards:
+        data = {
+            'name': prize.name,
+            'quantity': prize.quantity
+        }
+        prize_list.append(data)
+    return JsonResponse(prize_list, safe=False)

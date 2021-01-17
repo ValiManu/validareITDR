@@ -3,7 +3,7 @@
 {% block content %}
 
 <div id="content" class="content">
-	<h1 class="page-header">Validare Bon <small>Self Running 4</small></h1>
+	<h1 class="page-header">Validation <small><i> Campaign: {{ selected_campaign }}</i></small></h1>
 	<!-- end page-header -->
 	<!-- begin wizard-form -->
 	<form action="/" method="POST" name="form-wizard" class="form-control-with-bg" data-parsley-validate="">
@@ -16,8 +16,8 @@
 					<a href="#step-1" class="nav-link">
 						<span class="number">1</span>
 						<span class="info">
-							Bon Fiscal
-							<small>Introdu numar de bon fiscal</small>
+							Ticket Number
+							<small>Enter your ticket number</small>
 						</span>
 					</a>
 				</li>
@@ -25,8 +25,8 @@
 					<a href="#step-2" class="nav-link">
 						<span class="number">2</span>
 						<span class="info">
-							Produse
-							<small>Alege produsele achizitionate</small>
+							Products
+							<small>Select the products</small>
 						</span>
 					</a>
 				</li>
@@ -34,8 +34,8 @@
 					<a href="#step-3" class="nav-link">
 						<span class="number">3</span>
 						<span class="info">
-							Premii
-							<small>Revendica premiul</small>
+							Awards
+							<small>Select the prize</small>
 						</span>
 					</a>
 				</li>
@@ -52,7 +52,7 @@
 							<!-- begin col-8 -->
 							<div class="col-xl-8 offset-xl-2">
 								<div class="form-group row m-b-10">
-									<label class="col-lg-3 text-lg-right col-form-label">Numar Bon</label>
+									<label class="col-lg-3 text-lg-right col-form-label">Ticket Number</label>
 									<div class="col-lg-9">
 										<input class="form-control m-b-10" id="ticketValue" autocomplete="off" type="text" data-parsley-type="number" data-parsley-required="true" data-parsley-group="step-1">
 									</div>
@@ -87,7 +87,7 @@
 						<span class="fa-stack fa-1x">
 							<i class="far fa-times-circle fa-stack-2x"></i>
 						</span>
-						<strong>Nu ati ales niciun produs!</strong>
+						<strong>Select a product!</strong>
 					</div>
 				</div>
 				<!-- end step-2 -->
@@ -98,15 +98,10 @@
 							<input type="hidden" id="id_prize" value="0">
 							<div class="dx-widget dx-collection">
 								<div class="dx-item dx-radiobutton dx-radiobutton-checked" role="radio" aria-checked="true" style="height: auto;">
-									<div class="dx-radio-value-container">
-										<div class="dx-radiobutton-icon dx-radiobutton-icon-checked">
-											<div class="dx-radiobutton-icon-dot"></div>
-										</div>
-									</div>
 									<div class="dx-item-content">
 										<div class="card text-center">
 											<div class="card-header">
-												<img src="" id="img_prize" alt="Voucher 25 RON">
+												<img src="" id="img_prize" width="150" height="150">
 											</div>
 											<div style="font-weight: 600; color:white;" id="name_prize"></div>
 										</div>
@@ -119,19 +114,19 @@
 				</div>
 			<div class="btn-toolbar sw-toolbar sw-toolbar-bottom justify-content-end" id="step1">
 				<div class="btn-group mr-2 sw-btn-group" role="group">
-					<button class="btn btn-purple" type="button" onclick="ticketValidation()">Inainte</button>
+					<button class="btn btn-purple" type="button" onclick="is_ticket_in_use()">Next</button>
 				</div>
 			</div>
 			<div class="btn-toolbar sw-toolbar sw-toolbar-bottom justify-content-end" id="step2">
 				<div class="btn-group mr-2 sw-btn-group" role="group">
-					<button class="btn btn-secondary sw-btn-prev disabled" type="button" onclick="firstStep()">Inapoi</button>
-					<button class="btn btn-purple sw-btn-next" type="button" onclick="productValidation()">Inainte</button>
+					<button class="btn btn-secondary sw-btn-prev disabled" type="button" onclick="firstStep()">Back</button>
+					<button class="btn btn-purple sw-btn-next" type="button" onclick="is_product_in_use()">Next</button>
 				</div>
 			</div>
 			<div class="btn-toolbar sw-toolbar sw-toolbar-bottom justify-content-end" id="step3">
 				<div class="btn-group mr-2 sw-btn-group" role="group">
-					<button class="btn btn-secondary sw-btn-prev disabled" type="button" onclick="secondStep()">Inapoi</button>
-					<button class="btn btn-purple sw-btn-next" type="button" onclick="saveData()">Salveaza</button>
+					<button class="btn btn-secondary sw-btn-prev disabled" type="button" onclick="secondStep()">Back</button>
+					<button class="btn btn-purple sw-btn-next" id="save_tranzaction" type="button" onclick="save_transaction()">Save</button>
 				</div>
 			</div>
 			<!-- end wizard-content -->
@@ -140,6 +135,107 @@
 	</form>
 	<!-- end wizard-form -->
 </div>
+<script>
+	var get_quqntity = function () {
+        var quantity = 0;
+        for (var i = 0; i < $('.prodValue').length; i++) {
+            if ($('.prodValue')[i].value == '') {
+                $('.prodValue')[i].value = 0;
+            }
+            quantity = quantity + parseInt($('.prodValue')[i].value);
+		};
+		return quantity;
+	}
 
+    var is_ticket_in_use = function () {
+        var ticketNo = document.getElementById('ticketValue').value;
+        $.ajax({
+            url: "{% url 'ticket_in_use' %}",
+            data: {
+                'ticket': ticketNo
+            },
+            success: function (data) {
+                if ($('#errorMsg').length > 0) {
+                    $('#errorMsg').remove();
+                }
+                if (data.is_taken == 1) {
+                    $('#ticketValue').after('<ul class="parsley-errors-list filled" id="errorMsg"><li class="parsley-type">Invalid ticket number!</li></ul>');
+                } else if (data.is_taken == 2) {
+                    $('#ticketValue').after('<ul class="parsley-errors-list filled" id="errorMsg"><li class="parsley-type">The ticket number already exists!</li></ul>');
+                } else {
+                    secondStep();
+                }
+            }
+        });
+	};
+
+    var is_product_in_use = function () {
+        $.ajax({
+            type: 'GET',
+            url: "{% url 'product_in_use' %}",
+            data: {
+                'quantity': get_quqntity()
+            },
+            success: function (response) {
+				if (response.response) {
+					if (response.quantity == 0) {
+						thirdStep();
+						$('#save_tranzaction').css('display', 'none');
+                        document.getElementById('img_prize').src = '	/static/img/prize/zero_prize.png'
+					} else {
+                        thirdStep();
+                        document.getElementById('img_prize').src = response.url_img;
+                        $('#name_prize').html(response.name);
+                        document.getElementById('id_prize').value = response.id;
+                    }
+                }
+                else {
+                    $('.alert').css('display', 'block')
+                }
+            },
+            error: function (response) {
+                console.log(response);
+            }
+        });
+    };
+
+    var save_transaction = function () {
+        var ticketNo = document.getElementById('ticketValue').value;
+        var productsSell = [];
+        for (var i = 0; i < $('.prodValue').length; i++) {
+            if ($('.prodValue')[i].value != '' && $('.prodValue')[i].value != '0') {
+                productsSell.push({
+                    id: $('.prodValue')[i].id,
+                    value: $('.prodValue')[i].value
+                });
+            }
+        };
+        console.log(productsSell);
+        var idPrize = document.getElementById('id_prize').value;
+
+		var data = {
+            'quantity': get_quqntity(),
+            'ticketNo': ticketNo,
+            'productsSell': JSON.stringify(productsSell),
+            'idPrize': idPrize
+        }
+        $.ajax({
+            type: 'POST',
+            url: "{% url 'save_transaction' %}",
+            data: data,
+            success: function (response) {
+                if (response.response) {
+                    window.location.reload()
+                }
+                else {
+                    $('.alert').css('display', 'block')
+                }
+            },
+            error: function (response) {
+                console.log(response);
+            }
+        });
+    };
+</script>
 {% endblock %}
 

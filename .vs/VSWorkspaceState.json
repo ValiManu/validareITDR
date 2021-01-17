@@ -2,8 +2,8 @@
   "ExpandedNodes": [
     "",
     "\\validareITDR",
-    "\\validareITDR\\dashboard",
-    "\\validareITDR\\dashboard\\static\\custom_js"
+    "\\validareITDR\\dashboard"
   ],
+  "SelectedNode": "\\validareITDR\\templates",
   "PreviewInSolutionExplorer": false
 }

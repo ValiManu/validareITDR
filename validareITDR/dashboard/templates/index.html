@@ -3,51 +3,30 @@
 {% block content %}
 
 <div id="content" class="content">
-	<h1 class="page-header"> Dashboard <small><i> Campanie: {{ selected_campaign }} {% if not active_campaign %} <strong>: Expirata </strong> {% endif %}</i></small></h1>
+	<h1 class="page-header"> Dashboard <small><i> Campaign: {{ selected_campaign }} {% if not active_campaign %} <strong>: Expired </strong> {% endif %}</i></small></h1>
 	<div class="panel panel-inverse">
 		<div class="panel-heading">
-			<h4 class="panel-title">Vanzari</h4>
+			<h4 class="panel-title">Sales</h4>
 			<div class="panel-heading-btn">
 				<a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-default" data-click="panel-expand"><i class="fa fa-expand"></i></a>
 				<a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-warning" data-click="panel-collapse"><i class="fa fa-minus"></i></a>
 			</div>
 		</div>
 		<div class="panel-body">
-            <div id="gridContainer" class="table table-bordered"></div>
+            <div id="gridSales"></div>
 		</div>
 	</div>
-    <div class="panel panel-inverse">
-			<div class="panel-heading">
-				<h4 class="panel-title">Stoc Magazin</h4>
-				<div class="panel-heading-btn">
-					<a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-default" data-click="panel-expand"><i class="fa fa-expand"></i></a>
-					<a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-warning" data-click="panel-collapse"><i class="fa fa-minus"></i></a>
-				</div>
-			</div>
-			<div class="panel-body">
-				<table class="table">
-					<thead class="bg-black-transparent-4">
-						<tr>
-							<th>Produs</th>
-							<th>Cantitate</th>
-						</tr>
-					</thead>
-					{% if prize_list %}
-					{% for prize in prize_list %}
-					<tbody>
-					<td class="with-checkbox">{{ prize }}</td>
-					<td class="with-checkbox">{{ prize.quantity }}</td>
-					</tbody>
-					{% endfor %}
-					{% else %}
-					<tbody>
-					<td class="with-checkbox">-</td>
-					<td class="with-checkbox">-</td>
-					</tbody>
-					{% endif %}
-				</table>
+	<div class="panel panel-inverse">
+		<div class="panel-heading">
+            <h4 class="panel-title">Awards</h4>
+			<div class="panel-heading-btn">
+				<a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-warning" data-click="panel-collapse"><i class="fa fa-minus"></i></a>
 			</div>
 		</div>
+		<div class="panel-body">
+			<div id="gridPrizeList"></div>
+		</div>
+	</div>
 </div>
 <style>
     .dx-datagrid-headers {
@@ -56,8 +35,8 @@
 </style>
 <script>
     (function () {
-        $("#gridContainer").dxDataGrid({
-            dataSource: "{% url 'dashboard' %}",
+        $("#gridSales").dxDataGrid({
+            dataSource: "{% url 'sales_report' %}",
             paging: {
                 pageSize: 5
             },
@@ -70,11 +49,11 @@
                 applyFilter: "auto"
 			},
             export: {
-                enabled: true,
-			},
+                enabled: true
+            },
             onExporting: function (e) {
                 var workbook = new ExcelJS.Workbook();
-                var worksheet = workbook.addWorksheet('Vanzari');
+                var worksheet = workbook.addWorksheet('Sales');
 
                 DevExpress.excelExporter.exportDataGrid({
                     component: e.component,
@@ -82,35 +61,54 @@
                     autoFilterEnabled: true
                 }).then(function () {
                     workbook.xlsx.writeBuffer().then(function (buffer) {
-                        saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'Vanzari.xlsx');
+                        saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'Sales.xlsx');
                     });
                 });
                 e.cancel = true;
             },
 			columns: [{
 				dataField: "campaign",
-				caption: "Campanie"
+                caption: "Campaign"
 			}, {
 				dataField: "shop",
-				caption: "Magazin"
+				caption: "Shop Name"
 				}, {
 					dataField: "ticket_no",
-					caption: "Numar Bon"
+                    caption: "Ticket No",
 				}, {
 					dataField: "date",
-					caption: "Data"
+                    caption: "Date",
+                    format: "dd-MM-yyyy HH:mm:ss",
+                    dataType: "datetime",
+					sortOrder: "desc"
 				}, {
 					dataField: "total_sale",
-					caption: "Produse Vandute"
+                    caption: "Total Sales",
 				}, {
 					dataField: "prize",
-					caption: "Premiu Acordat"
+					caption: "Prize"
 					}],
         onInitNewRow: function(e) {
             e.shop = 245;
         },
-        showBorders: true
+            showBorders: true,
+            showRowLines: true
     });
+    })();
+
+    (function () {
+        $("#gridPrizeList").dxDataGrid({
+            dataSource: "{% url 'prize_report' %}",
+            columns: [{
+                dataField: "name",
+                caption: "Prize"
+            }, {
+                dataField: "quantity",
+                    caption: "Quantity",
+                    alignment: "left"
+                }],
+            showBorders: false
+        });
     })();
 </script>
 {% endblock %}

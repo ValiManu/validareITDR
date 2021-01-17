@@ -26,3 +26,10 @@
 * form wizard manually restored
 * the mechanics of awarding prizes according to the products sold
 * display transactions in the dashboard
+
+## 4. eng_version
+* field display formatting
+* change user interface in English
+* change database logic
+* zero prize stock management
+* delete unnecessary files
