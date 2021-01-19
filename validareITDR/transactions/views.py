@@ -4,7 +4,7 @@ from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 from dashboard.models import Product, Prize, Shop
-from dashboard.views import get_active_campaign, get_selected_campaign
+from dashboard.views import get_active_campaign, get_selected_campaign, get_prize_list
 from .models import Sales, ProductsSold
 from django.http import JsonResponse
 import json
@@ -14,7 +14,8 @@ import json
 def transactions(request):
     context = {
         'product_list': get_campaign_products(),
-        'active_campaign': get_active_campaign()
+        'active_campaign': get_active_campaign(),
+        'selected_campaign': get_selected_campaign()
     }
     return render(request, 'transactions.html', context)
 
@@ -39,57 +40,68 @@ def is_ticket_in_use(request):
 
 @login_required
 def is_product_in_use(request):
-    products = request.GET.getlist('products[]')
-    check_products = 0
-    data = {}
-    for prod in products:
-        check_products = check_products + int(prod)
-    if check_products == 0:
+    quantity = int(request.GET.get('quantity'))
+    if not quantity:
         return JsonResponse({'response': False})
-    else:
-        prize_list = Prize.objects.all()
-        for prize in prize_list:
-            if prize.min < check_products <= prize.max:
-                data = {
-                    'name': prize.name,
-                    'url_img': prize.url_img,
-                    'id': prize.id,
-                    'response': True
-                }
+    prize_list = get_prize_list(request)
+    for prize in prize_list:
+        if prize.min <= quantity <= prize.max:
+            data = {
+                'name': prize.name,
+                'url_img': prize.url_img,
+                'id': prize.id,
+                'quantity': prize.quantity,
+                'response': True
+            }
     return JsonResponse(data)
 
 
 @login_required
 @csrf_exempt
-def save_data(request):
+def save_transaction(request):
     ticket_no = request.POST.get('ticketNo')
-    products_sell = json.loads(request.POST.get('productsSell'))
-    id_prize = request.POST.get('idPrize')
-    shop = get_object_or_404(Shop.objects.filter(user__exact=request.user.id)).id
-    product_list = Prize.objects.filter(shop__exact=shop)
-    total_sold = 0
-    for prod in products_sell:
-        total_sold = total_sold + int(prod['value'])
-    sales = Sales()
-    sales.ticket_no = ticket_no
-    sales.ticket_date = timezone.now()
-    sales.prize_id = id_prize
-    sales.shop_id = shop
-    sales.total_sale = total_sold
-    sales.save()
-    for prod in products_sell:
-        prod_sold = ProductsSold()
-        prod_sold.quantity = prod['value']
-        prod_sold.product_id = prod['id']
-        prod_sold.sale_id = sales.id
-        prod_sold.save()
-    for prize in product_list:
-        if prize.id == int(id_prize):
-            prize.quantity = prize.quantity - 1
-            prize.save()
+    products = json.loads(request.POST.get('productsSell'))
+    prize_id = request.POST.get('idPrize')
+    shop = Shop.objects.get(user__exact=request.user.id).id
+    quantity = request.POST.get('quantity')
+    campaign = get_selected_campaign()
+    sale_id = save_sale(ticket_no, prize_id, shop, quantity, campaign)
+    save_products_sold(products, sale_id)
+
+    prize = get_prize(prize_id)
+    prize.quantity = prize.quantity - 1
+    prize.save()
+    print(prize.quantity)
+
     return JsonResponse({'response': True})
 
 
 def get_campaign_products():
     product_list = Product.objects.filter(promotional_campaign__exact=get_selected_campaign().id)
     return product_list
+
+
+def save_sale(ticket_no, prize_id, shop, quantity, campaign):
+    sales = Sales()
+    sales.ticket_no = ticket_no
+    sales.ticket_date = timezone.now()
+    sales.prize_id = prize_id
+    sales.shop_id = shop
+    sales.total_sale = quantity
+    sales.promotional_campaign = campaign
+    sales.save()
+    return sales.id
+
+
+def get_prize(prize_id):
+    prize = Prize.objects.get(id__exact=prize_id)
+    return prize
+
+
+def save_products_sold(products, sale_id):
+    for product in products:
+        product_sold = ProductsSold()
+        product_sold.quantity = product['value']
+        product_sold.product_id = product['id']
+        product_sold.sale_id = sale_id
+        product_sold.save()

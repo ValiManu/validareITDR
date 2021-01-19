@@ -1,8 +1,8 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 	<meta charset="utf-8" />
-	<title>Validare ITDR | Dashboard</title>
+	<title>Self Running</title>
 	<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport" />
 	<meta content="" name="description" />
 	<meta content="" name="author" />
@@ -15,10 +15,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-polyfill/7.4.0/polyfill.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.1.1/exceljs.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.2/FileSaver.min.js"></script>
-
-
-
-        <script type="text/javascript" src="https://cdn3.devexpress.com/jslib/20.2.4/js/dx.all.js"></script>
+    <script type="text/javascript" src="https://cdn3.devexpress.com/jslib/20.2.4/js/dx.all.js"></script>
 
 </head>
 <body>
@@ -38,7 +35,7 @@
 		<div id="header" class="header navbar-default">
 			<!-- begin navbar-header -->
 			<div class="navbar-header">
-				<a href="{% url 'index'%}" class="navbar-brand"><span class="navbar-logo"></span> <b>Validare</b> ITDR</a>
+				<a href="{% url 'index'%}" class="navbar-brand"><span class="navbar-logo"></span> <b>Self</b>Running</a>
 			</div>
 			<!-- end navbar-header -->
 			<!-- begin header-nav -->
@@ -90,23 +87,23 @@
                         {% if active_campaign %}
 						<a href="{% url 'transactions' %}">
 							<i class="far fa-check-circle"></i>
-							<span>Validare Bon</span>
+							<span>Validation</span>
 						</a>
                         <a href="{% url 'campaign' %}">
 							<i class="fas fa-exchange-alt"></i>
-							<span>Schimba Campanie</span>
+							<span>Select Campaign</span>
 						</a>
 						<a href="javascript:;">
 							<i class="fa fa-question-circle"></i>
-							<span>Manual de Utilizare</span>
+							<span>User Manual</span>
 						</a>
 						<a href="javascript:;">
 							<i class="fa fa-info-circle"></i>
-							<span>Regulament Campanie</span>
+							<span>Campaign Rules</span>
 						</a>
 						<a href="javascript:;">
 							<i class="fa fa-info-circle"></i>
-							<span>Prezentare Campanie</span>
+							<span>Campaign Presentation</span>
 						</a>
                         {% else %}
                         <a href="{% url 'campaign' %}">
