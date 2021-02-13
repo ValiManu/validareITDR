@@ -1,18 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-
-</body>
-</html><!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 
 	<meta charset="utf-8" />
-	<title>Self Running | Login Page</title>
+	<title>Self Running | Login</title>
 	<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport" />
 	<meta content="" name="description" />
 	<meta content="" name="author" />
@@ -42,6 +33,7 @@
 			<div class="right-content">
 				<!-- begin login-header -->
 				<div class="login-header">
+					<h5 style="display: none" id="activate_account">Your account has been activated!</h5>
 					<div class="brand">
 						<span class="logo"></span> <b>Self</b> Running
 					</div>
@@ -63,14 +55,19 @@
 						<div class="checkbox checkbox-css m-b-30">
 							<input type="checkbox" id="remember_me_checkbox" value="" />
 							<label for="remember_me_checkbox">
-							Remember Me
+								Remember Me
 							</label>
 						</div>
 						<div class="login-buttons">
 							<button type="submit" class="btn btn-primary btn-block btn-lg">Login</button>
 						</div>
+						<div class="m-t-20 m-b-40 p-b-40 text-white">
+							Not a member yet? Click <a href="{% url 'register' %}">here</a> to register.
+						</div>
+
 					</form>
 				</div>
+
 				<!-- end login-content -->
 			</div>
 			<!-- end right-container -->
@@ -84,6 +81,14 @@
 
 	<!-- ================== BEGIN BASE JS ================== -->
 	<script src="/static/js/app.min.js"></script>
-	<script src="/static/js/theme/transparent.min.js"></script>
+    <script>
+		var is_link = function () {
+			if (window.location.hash) {
+                $('#activate_account').css('display', 'block');
+			}
+		}
+		is_link();
+
+    </script>
 	<!-- ================== END BASE JS ================== -->
 </body>

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>Self running | Register</title>
+	<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport" />
+	<meta content="" name="description">
+	<meta content="" name="author">
+	{% load static %}
+	<script type="text/javascript" src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <link href="{% static 'css/transparent/app.min.css' %}" rel="stylesheet">
+</head>
+<body class="pace-top">
+	<div id="page-loader" class="fade show">
+		<span class="spinner"></span>
+	</div>
+	<div id="page-container" class="fade">
+		<div class="register register-with-news-feed">
+			<div class="news-feed">
+				<div class="news-image" style="background-image: url(/static/img/login-bg/login-bg-17.jpg)"></div>
+			</div>
+			<div class="right-content ">
+				<h1 class="register-header">
+					User without rights!
+					<small>Call the administrator</small>
+				</h1>
+                <div class="m-t-30 m-b-30 p-b-30">
+                    <a href="{% url 'logout' %}"><i class="fas fa-home fa-3x"></i></a>
+                </div>
+				</div>
+
+			</div>
+		</div>
+	</div>
+	<script src="{% static 'js/app.min.js' %}"></script>
