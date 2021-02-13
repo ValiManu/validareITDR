@@ -33,3 +33,12 @@
 * change database logic
 * zero prize stock management
 * delete unnecessary files
+
+## 5. sign in
+* register user page
+* email user confirmation
+* username validation
+* custom login message
+* check if username and email already exist
+* add campaigns
+* edit campaigns

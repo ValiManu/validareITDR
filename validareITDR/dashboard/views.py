@@ -1,14 +1,19 @@
+from django.contrib.auth import authenticate
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
-from dashboard.models import PromotionalCampaign, Shop, Prize
+from dashboard.models import PromotionalCampaign, Shop, Prize, Network
 from transactions.models import Sales
-from django.http import JsonResponse, HttpResponse
+from django.http import JsonResponse
+import pytz
+import datetime
 
 
 @login_required
 def index(request):
+    if not Shop.objects.filter(user__exact=request.user.id).exists():
+        return render(request, 'user.html')
     context = {
         'shop': get_user_shop(request),
         'prize_list': get_prize_list(request),
@@ -28,6 +33,77 @@ def change_campaign(request):
         'shop': get_user_shop(request)
     }
     return render(request, 'campaign.html', context)
+
+
+def admin_configuration(request):
+    return render(request, 'admin_configuration.html')
+
+
+def campaign_configuration(request):
+    return render(request, 'campaign_configuration.html')
+
+
+def campaign_report(request):
+    report = list(get_all_campaign().values())
+    return JsonResponse(report, safe=False)
+
+
+def campaigns_display(request):
+    context = {
+        'campaigns': get_all_campaign()
+    }
+    return render(request, 'campaign_configuration.html', context)
+
+
+@csrf_exempt
+def add_campaign(request):
+    if request.method == 'POST':
+        campaign_name = request.POST.get('campaignName')
+        start_date = datetime.datetime.strptime(request.POST.get('startDate'), '%Y-%m-%dT%H:%M')
+        timezone_ro = pytz.timezone('Europe/Bucharest')
+        start_date = timezone_ro.localize(start_date)
+        end_date = datetime.datetime.strptime(request.POST.get('endDate'), '%Y-%m-%dT%H:%M')
+        end_date = timezone_ro.localize(end_date)
+        network = request.POST.get('network')
+        new_campaign = PromotionalCampaign(name=campaign_name, start_date=start_date, end_date=end_date)
+        new_campaign.shops_network_id = network
+        new_campaign.save()
+
+    context = {
+        'networks': Network.objects.all()
+    }
+    return render(request, 'add_campaign.html', context)
+
+
+@csrf_exempt
+def is_campaign_name(request):
+    campaign_name = request.POST.get('campaignName').lower()
+    if PromotionalCampaign.objects.filter(name__exact=campaign_name):
+        return JsonResponse({'data': True})
+    return JsonResponse({'data': False})
+
+
+@csrf_exempt
+def edit_campaign(request, pk):
+    campaign = PromotionalCampaign.objects.get(id__exact=pk)
+    if request.method == 'POST':
+        campaign_name = request.POST.get('campaignName')
+        start_date = datetime.datetime.strptime(request.POST.get('startDate'), '%Y-%m-%dT%H:%M')
+        timezone_ro = pytz.timezone('Europe/Bucharest')
+        start_date = timezone_ro.localize(start_date)
+        end_date = datetime.datetime.strptime(request.POST.get('endDate'), '%Y-%m-%dT%H:%M')
+        end_date = timezone_ro.localize(end_date)
+        campaign.name = campaign_name
+        campaign.start_date = start_date
+        campaign.end_date = end_date
+        campaign.save()
+    context = {
+        'campaign_name': campaign.name,
+        'start_date': campaign.start_date.strftime("%Y-%m-%dT%H:%m"),
+        'end_date': campaign.end_date.strftime("%Y-%m-%dT%H:%m"),
+        'campaign_id': campaign.id
+    }
+    return render(request, 'edit_campaign.html', context)
 
 
 @csrf_exempt

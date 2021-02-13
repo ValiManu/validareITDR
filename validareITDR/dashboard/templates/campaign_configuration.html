@@ -1,0 +1,186 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Self Running</title>
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport" />
+    <meta content="" name="description" />
+    <meta content="" name="author" />
+    {% load static %}
+    <link rel="stylesheet" href="https://cdn3.devexpress.com/jslib/20.2.4/css/dx.common.css">
+    <link rel="stylesheet" href="https://cdn3.devexpress.com/jslib/20.2.4/css/dx.dark.compact.css">
+    <link href="{% static 'css/transparent/app.min.css' %}" rel="stylesheet">
+    <!-- DEV -->
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-polyfill/7.4.0/polyfill.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.1.1/exceljs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.2/FileSaver.min.js"></script>
+    <script type="text/javascript" src="https://cdn3.devexpress.com/jslib/20.2.4/js/dx.all.js"></script>
+
+    <script src="https://unpkg.com/devextreme-aspnet-data@2.7.1/js/dx.aspnet.data.js"></script>
+
+
+
+
+
+
+</head>
+<body>
+    <!-- begin page-cover -->
+    <div class="page-cover"></div>
+    <!-- end page-cover -->
+    <!-- begin #page-loader -->
+    <div id="page-loader" class="fade show">
+        <span class="spinner"></span>
+    </div>
+    <!-- end #page-loader -->
+    <!-- begin #page-container -->
+    <div id="page-container" class="page-container fade page-sidebar-fixed page-header-fixed">
+        <!-- begin #header -->
+        <div id="header" class="header navbar-default">
+            <!-- begin navbar-header -->
+            <div class="navbar-header">
+                <a href="{% url 'index'%}" class="navbar-brand"><span class="navbar-logo"></span> <b>Self</b>Running</a>
+            </div>
+            <!-- end navbar-header -->
+            <!-- begin header-nav -->
+            <ul class="navbar-nav navbar-right">
+                <li class="dropdown navbar-user">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                        <div class="image image-icon bg-black text-grey-darker">
+                            <i class="fa fa-user"></i>
+                        </div>
+                        <span class="d-none d-md-inline">{{user.get_username.capitalize}}</span> <b class="caret"></b>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right">
+                        <a href="{% url 'logout'%}?next={{request.path}}" class="dropdown-item">Log Out</a>
+                    </div>
+                </li>
+            </ul>
+            <!-- end header navigation right -->
+        </div>
+        <!-- end #header -->
+        <!-- begin #sidebar -->
+        <div id="sidebar" class="sidebar">
+            <!-- begin sidebar scrollbar -->
+            <div data-scrollbar="true" data-height="100%">
+                <!-- begin sidebar user -->
+                <ul class="nav">
+                    <li class="nav-profile">
+                        <a href="javascript:;" data-toggle="nav-profile">
+                            <div class="cover with-shadow"></div>
+                            <div class="image image-icon bg-black text-grey-darker">
+                                <i class="fa fa-user"></i>
+                            </div>
+                            <div class="info">
+                                {{user}}
+                            </div>
+                        </a>
+                    </li>
+                </ul>
+                <!-- end sidebar user -->
+                <!-- begin sidebar nav -->
+                <ul class="nav">
+                    <li class="has-sub">
+                        <a href="{% url 'campaign' %}">
+                            <i class="fas fa-bullhorn"></i>
+                            <span>Campaign</span>
+                        </a>
+                    </li>
+                    <!-- begin sidebar minify button -->
+                    <li><a href="javascript:;" class="sidebar-minify-btn" data-click="sidebar-minify"><i class="fa fa-angle-double-left"></i></a></li>
+                    <!-- end sidebar minify button -->
+                </ul>
+                <!-- end sidebar nav -->
+            </div>
+            <!-- end sidebar scrollbar -->
+        </div>
+
+        <div id="content" class="content">
+            <h1 class="page-header"> Campaigns List </h1>
+            <div class="panel panel-inverse">
+                <div class="panel-heading">
+                    <h4 class="panel-title">Campaigns</h4>
+                    <div class="panel-heading-btn">
+                        <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-default" data-click="panel-expand"><i class="fa fa-expand"></i></a>
+                        <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-warning" data-click="panel-collapse"><i class="fa fa-minus"></i></a>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <div class="dx-datagrid-header-panel">
+                        <div class="dx-toolbar dx-widget dx-visibility-change-handler dx-collection" role="toolbar">
+                            <div class="dx-toolbar-items-container">
+                                <div class="dx-toolbar-after">
+                                    <div class="dx-item dx-toolbar-item dx-toolbar-button dx-toolbar-item-auto-hide dx-toolbar-text-auto-hide">
+                                        <div class="dx-item-content dx-toolbar-item-content">
+                                            <div class="dx-datagrid-toolbar-button dx-edit-button dx-datagrid-addrow-button dx-button dx-button-normal dx-button-mode-contained dx-widget dx-button-has-icon dx-button-has-text" aria-label="Add a row" title="Add a row" tabindex="0" role="button">
+                                                <div class="dx-button-content"><a href="{% url 'add_campaign' %}" class="dx-icon dx-icon-edit-button-addrow"></a>
+                                                    <span class="dx-button-text">Add a row</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Campaign Name</th>
+                                    <th>Start date</th>
+                                    <th>End Date</th>
+                                    <th>Network</th>
+                                    <th>Edit</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for campaign in campaigns %}
+                                <tr>
+                                    <td>{{ campaign.name|capfirst }}</td>
+                                    <td>{{ campaign.start_date|date:'d-m-Y' }}</td>
+                                    <td>{{ campaign.end_date|date:'d-m-Y' }}</td>
+                                    <td>{{ campaign.shops_network }}</td>
+                                    <td><a href="{% url 'edit_campaign' campaign.id %}" class="dx-link dx-link-edit dx-icon-edit dx-link-icon" title="Edit" aria-label="Edit"></a></td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <a href="javascript:;" class="btn btn-icon btn-circle btn-success btn-scroll-to-top fade" data-click="scroll-top"><i class="fa fa-angle-up"></i></a>
+        <!-- end scroll to top btn -->
+    </div>
+   
+    <script>
+        (function () {
+            $("#gridPrizeList").dxDataGrid({
+                dataSource: "{% url 'prize_report' %}",
+                columns: [{
+                    dataField: "name",
+                    caption: "Prize"
+                }, {
+                    dataField: "quantity",
+                    caption: "Quantity",
+                    alignment: "left"
+                }],
+                showBorders: false
+            });
+        })();
+    </script>
+    <!-- end page container -->
+    <!-- ================== BEGIN BASE JS ================== -->
+    <script src="{% static 'js/app.min.js' %}"></script>
+    <!-- ================== END BASE JS ================== -->
+    <!-- ================== BEGIN PAGE LEVEL JS ================== -->
+    <script src="{% static 'custom_js/smartWizard.js' %}"></script>
+    <!-- ================== END PAGE LEVEL JS ================== -->
+
+</body>
+</html>
+

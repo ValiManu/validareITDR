@@ -1,0 +1,123 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Self running | Register</title>
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport" />
+    <meta content="" name="description">
+    <meta content="" name="author">
+    {% load static %}
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <link href="{% static 'css/transparent/app.min.css' %}" rel="stylesheet">
+</head>
+<body class="pace-top">
+    <div id="page-loader" class="fade show">
+        <span class="spinner"></span>
+    </div>
+    <div id="page-container" class="fade">
+        <div class="register register-with-news-feed">
+            <div class="news-feed">
+                <div class="news-image" style="background-image: url(/static/img/login-bg/login-bg-17.jpg)"></div>
+            </div>
+            <div class="right-content">
+                <h1 class="register-header">
+                    Edit Campaign
+                    <small></small>
+                </h1>
+                <div class="register-content">
+                    <form method="POST" action="{% url 'campaigns_display' %}" class="margin-bottom-0">
+                        {% csrf_token %}
+                        <label class="control-label"> Campaign Name <span class="text-danger">*</span></label>
+                        <div class="row row-space-10">
+                            <div class="col-md-6 m-b-15">
+                                <input type="text" class="form-control" id="campaignName" placeholder="Campaign Name" required onchange="isCampaignName()" value="{{ campaign_name }}" />
+                                <div class="invalid-feedback">Campaign name already exists!</div>
+                            </div>
+                        </div>
+                        <div class="row row-space-10">
+                            <div class="col-md-6 m-b-15">
+                                <label class="control-label">Start Date <span class="text-danger">*</span></label>
+                                <input type="datetime-local" class="form-control" id='startDate' onchange="is_enddate()" required value="{{ start_date }}" />
+                            </div>
+                            <div class="col-md-6 m-b-15">
+                                <label class="control-label">End Date <span class="text-danger">*</span></label>
+                                <input type="datetime-local" class="form-control" id="endDate" onchange="is_enddate()" required value="{{ end_date }}" />
+                                <div class="invalid-feedback">End date is greater than start date!</div>
+                            </div>
+                        </div>
+                        <div class="register-buttons">
+                            <button type="submit" class="btn btn-primary btn-block btn-lg" id="signUp" onclick="editCampaign()">Save</button>
+                        </div>
+                        <div class="m-t-30 m-b-30 p-b-30"><a href="{% url 'campaigns_display' %}">Back</a></div>
+                        <hr />
+                        <p class="text-center mb-0">&copy; Self Running All Right Reserved 2020</p>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <style>
+        option {
+            background-color: #666666;
+        }
+    </style>
+    <script src="{% static 'js/app.min.js' %}"></script>
+    <script>
+        var isCampaignName = function () {
+            var campaignName = document.getElementById('campaignName').value
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'is_campaign_name' %}",
+                data: {
+                    'campaignName': campaignName
+                },
+                success: function (data) {
+                    if (data.data) {
+                        $('#campaignName').addClass('is-invalid');
+                        $('#signUp').addClass('disabled');
+                        $('#signUp').prop('type', 'button');
+                    } else {
+                        $('#campaignName').removeClass('is-invalid');
+                        $('#signUp').removeClass('disabled');
+                        $('#signUp').prop('type', 'submit');
+                    }
+                }
+            });
+        }
+        var is_enddate = function () {
+            var startDate = document.getElementById('startDate').value;
+            var endDate = document.getElementById('endDate').value;
+            if (startDate > endDate) {
+                $('#endDate').addClass('is-invalid');
+                $('#signUp').addClass('disabled');
+                $('#signUp').prop('type', 'button');
+            } else {
+                $('#endDate').removeClass('is-invalid');
+                $('#signUp').removeClass('disabled');
+                $('#signUp').prop('type', 'submit');
+            }
+        }
+
+        var editCampaign = function () {
+            var campaignName = document.getElementById('campaignName').value;
+            var startDate = document.getElementById('startDate').value;
+            var endDate = document.getElementById('endDate').value;
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'edit_campaign' campaign_id %}",
+                data: {
+                    'campaignName': campaignName,
+                    'startDate': startDate,
+                    'endDate': endDate,
+                },
+                success: function (data) {
+
+                }
+            });
+        }
+    </script>
+</body>
+</html>
+
+
+
